@@ -1,6 +1,6 @@
-const UID = shortid.generate;
-const {BrowserRouter, Route, Link} = ReactRouterDOM;
-const {kebabcase} = lodash;
+const UID = window.shortid.generate;
+const {BrowserRouter, Route, Link} = window.ReactRouterDOM;
+const {kebabcase} = window.lodash;
 
 const data = {
   "characters": [{
@@ -116,5 +116,5 @@ function Movie ({title, releaseDate}) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(<App />, document.getElementById('root'));
+  window.ReactDOM.render(<App />, document.getElementById('root'));
 });
