@@ -1,6 +1,8 @@
 const UID = window.shortid.generate;
 const {BrowserRouter, Route, Link} = window.ReactRouterDOM;
-const {kebabcase} = window.lodash;
+const {kebabcase, sortby} = window.lodash;
+
+let sortBy = sortby;
 
 const data = {
   "characters": [{
@@ -14,13 +16,13 @@ const data = {
     "url": "https://swapi.co/api/people/unknown/" // TODO: get the ID
   }, {
     "name": "R2-D2",
-    "url": "https://swapi.co/api/people/2/"
+    "url": "https://swapi.co/api/people/2/" // id 2 is C-3PO!
   }]
 };
 
 function App () {
   let characterLinks = data.characters.reduce((links, character) => {
-    let id = character.url.split('/').find(parseInt);
+    let id = parseId(character.url);
     let slug = kebabcase(character.name);
 
     return links.concat({
@@ -58,46 +60,73 @@ function Character ({name, path}) {
 class MovieList extends React.Component {
   constructor () {
     super();
-    this.state = {};
+    this.state = {
+      characters: {},
+      movies: {}
+    };
     this.getMovies.bind(this);
   }
 
-  getMovies (id) {
+  getMovies (characterId) {
+    var movieIds;
+
     // fetch list of films for character, then fetch data for each film
-    fetch('https://swapi.co/api/people/' + id)
+    fetch('https://swapi.co/api/people/' + characterId)
       .then(res => res.json())
-      .then(data => Promise.all(
-        data.films.map(url => fetch(url).then(res => res.json()))
-      ))
       .then(data => {
-        let movies = data.map(movie => {
-          return {
-            title: movie.title,
-            releaseDate: movie.release_date,
-            openingCrawl: movie.opening_crawl,
-            episodeId: movie.episode_id
-          }
-        });
+        movieIds = data.films.map(url => parseId(url));
+
+        return Promise.all(
+          data.films
+            // only fetch films if they haven't been already
+            .filter(url => !Object.keys(this.state.movies).includes(parseId(url)))
+            .map(url => fetch(url).then(res => res.json()))
+        );
+      })
+      .then(data => {
+        let movies = Object.assign({},
+            this.state.movies,
+            data.reduce((movies, movie) => {
+              movies[parseId(movie.url)] = {
+                title: movie.title,
+                releaseDate: movie.release_date,
+                openingCrawl: movie.opening_crawl,
+                episodeId: movie.episode_id
+              };
+
+              return movies;
+            }, {})
+        );
+
+        // sort movies by episode # (API order seems arbitrary)
+        let movieIdsByEpisode = sortBy(movieIds, id => movies[id].episodeId);
 
         // data is fetched once, then cached in component state
-        this.setState({ [id]: movies })
+        this.setState({
+          characters: Object.assign(this.state.characters, {
+            [characterId]: movieIdsByEpisode
+          }),
+          movies
+        })
       })
       .catch(alert);
   }
 
   render () {
     let {id} = this.props.match.params;
-    let data = this.state[id];
+    let movieList = this.state.characters[id];
 
-    if (!data) {
+    if (!movieList) {
       this.getMovies(id);
       return <em>Loading</em>;
     }
 
+    let movieData = movieList.map(id => this.state.movies[id]);
+
     return (
       <section className="MovieList">
         <h2>Filmography</h2>
-        {data.map(props => <Movie key={UID()} {...props} />)}
+        {movieData.map(props => <Movie key={UID()} {...props} />)}
       </section>
     );
   }
@@ -113,6 +142,10 @@ function Movie ({title, releaseDate}) {
       <time className="Movie__release" dateTime={releaseDate}>{formattedReleaseDate}</time>
     </section>
   );
+}
+
+function parseId (url) {
+  return url.split('/').find(segment => parseInt(segment, 10));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
