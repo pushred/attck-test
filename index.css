@@ -1,0 +1,323 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,900');
+@import url('https://fonts.googleapis.com/css?family=Source+Serif+Pro:400');
+
+html {
+  font-size:                    62.5%; /* reset root em unit to 10px */
+  line-height:                  var(--line-height);
+}
+
+:root {
+  /* animation */
+
+  --saber-ease:                 cubic-bezier(0.19, 1, 0.22, 1);
+
+  /* radii */
+
+  --circle-radius:              50%;
+
+  /* sizes */
+
+  --line-height:                1.5;
+  --box-padding:                0.4em;
+
+  /* elevation */
+
+  --content-zindex:             50;
+  --nav-zindex:                 100;
+
+  /* type */
+
+  --display-font-family:        'Source Serif Pro', sans-serif;
+  --ui-font-family:             'Source Sans Pro', sans-serif;
+
+  --loose-spacing:              0.2em;
+
+  /* colors */
+
+  --white-color:                hsl(215, 15%,  90%);
+  --black-color:                hsl(215, 70%,  7%);
+
+  --blue-color:                 hsl(215, 70%,  15%);
+  --light-blue-color:           hsl(215, 90%,  60%);
+
+  --gray-color:                 hsl(215, 10%,  50%);
+  --green-color:                hsl(83,  50%,  50%);
+  --yellow-color:               hsl(55,  50%,  50%);
+  --orange-color:               hsl(30,  50%,  50%);
+  --red-color:                  hsl(350, 50%,  50%);
+  --sand-color:                 hsl(50,  50%,  50%);
+
+  --episode-1-color:            var(--sand-color);
+  --episode-2-color:            var(--green-color);
+  --episode-3-color:            var(--yellow-color);
+  --episode-4-color:            var(--gray-color);
+  --episode-5-color:            var(--white-color);
+  --episode-6-color:            var(--red-color);
+  --episode-7-color:            var(--orange-color);
+
+  --brand-color:                hsl(55, 100%, 56%);
+  --background-color:           var(--black-color);
+  --text-color:                 var(--white-color);
+  --link-text-color:            var(--white-color);
+
+  --button-color:               var(--black-color);
+
+  /* custom properties */
+
+  --centered: {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  --fill-box: {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  --clearfix: {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  --reset-box: {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  --reset-link: {
+    &:hover,
+    &:active,
+    &:visited { color: currentColor }
+
+    &,
+    & > * {
+      cursor: pointer;
+      border: 0;
+      border: 0;
+      color: currentColor;
+      text-decoration: none;
+    }
+  }
+
+  --reset-list: {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    & > * {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  --reset-list: {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    & > * {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+body {
+  @apply --centered;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--ui-font-family);
+}
+
+.is-loading { cursor: progress }
+
+a {
+  color: var(--link-text-color);
+}
+
+.Heading {
+  display: block;
+  margin: 0 0 1em 0;
+  color: var(--gray-color);
+  font-size: 1em;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--loose-spacing);
+}
+
+/* Layout */
+
+.Main {
+  @apply --clearfix;
+  min-width: 50em;
+}
+
+.Main__content {
+  @apply --clearfix;
+  width: 100%;
+  float: left;
+
+  display: flex;
+  align-items: center;
+}
+
+.Characters {
+  width: 40%;
+  padding-right: 10%;
+  float: left;
+  position: relative;
+  z-index: var(--nav-zindex);
+}
+
+.Movies {
+  width: 50%;
+  position: relative;
+  float: left;
+}
+
+/* Content */
+
+.Brand {
+  cursor: default;
+  user-select: none;
+  display: inline-block;
+  position: fixed;
+  top: 0.5em;
+  left: 0.5em;
+  margin: 0;
+  border-right: 1px solid var(--yellow-color);
+  border-bottom: 1px solid var(--yellow-color);
+  padding: 0 var(--box-padding);
+  font-weight: 900;
+  font-size: 1.2em;
+  line-height: 1.5;
+  color: var(--brand-color);
+  letter-spacing: var(--loose-spacing);
+  text-rendering: optimizeLegibility;
+}
+
+.CharacterList {
+  @apply --reset-list;
+}
+
+.Character {
+  display: block;
+  position: relative;
+  margin: 0.5em 0 0.5em calc(var(--box-padding) * -1);
+  padding: 0 var(--box-padding);
+  font-size: 1.6em;
+  transition: all .5s var(--saber-ease);
+
+  &__link {
+    @apply --reset-link;
+    transition: all .5s var(--saber-ease);
+
+    &:hover {
+      background-color: var(--blue-color);
+      box-shadow: 0 0 10px 5px var(--blue-color);
+      color: var(--light-blue-color);
+      text-shadow: 0 0 1px var(--light-blue-color);
+    }
+  }
+
+  &__link--active {
+    &,
+    &:hover,
+    &:active,
+    &:visited {
+      color: var(--brand-color);
+      background: none;
+      box-shadow: none;
+      text-shadow: none;
+    }
+  };
+
+  &--error {
+    cursor: not-allowed;
+    color: var(--gray-color);
+    text-decoration: line-through;
+    &:hover { background: transparent }
+  }
+}
+
+.Movie {
+  &:not(:last-child) {
+    margin-bottom: 1em;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 2.4em;
+    line-height: 1.1;
+    font-weight: 400;
+    color: var(--white-color);
+    text-rendering: optimize-legibility;
+  }
+
+  &__episode {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: var(--circle-radius);
+    color: hsla(0, 0%, 0%, 0.7);
+    line-height: 2;
+    text-align: center;
+    text-rendering: optimizeLegibility;
+    vertical-align: middle;
+  }
+
+  &__release {
+    margin-left: 1em;
+    color: var(--gray-color);
+    font-family: var(--display-font-family);
+    text-transform: uppercase;
+    letter-spacing: var(--loose-spacing);
+    vertical-align: middle;
+  }
+
+  &--episode-1 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-1-color) shade(25%));
+    color: var(--episode-1-color);
+  }
+
+  &--episode-2 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-2-color) shade(25%));
+    color: var(--episode-2-color);
+  }
+
+  &--episode-3 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-3-color) shade(25%));
+    color: var(--episode-3-color);
+  }
+
+  &--episode-4 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-4-color) shade(25%));
+    color: var(--episode-4-color);
+  }
+
+  &--episode-5 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-5-color) shade(25%));
+    color: var(--episode-5-color);
+  }
+
+  &--episode-6 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-6-color) shade(25%));
+    color: var(--episode-6-color);
+  }
+
+  &--episode-7 .Movie__episode {
+    box-shadow: 0 0 5px 1px color(var(--episode-7-color) shade(25%));
+    color: var(--episode-7-color);
+  }
+}
