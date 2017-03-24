@@ -90,7 +90,7 @@ class MovieList extends React.Component {
     var movieIds;
 
     // fetch list of films for character, then fetch data for each film
-    fetch('https://swapi.co/api/people/' + characterId)
+    fetch('https://swapi.co/api/people/' + characterId + '/')
       .then(res => res.json())
       .then(data => {
         movieIds = data.films.map(url => parseId(url));
