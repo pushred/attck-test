@@ -44,7 +44,9 @@ function App () {
   return (
     <BrowserRouter>
       <main className="Main">
-        <h1 className="Brand">SWDB</h1>
+        <header className="Header">
+          <h1 className="Brand">SWDB</h1>
+        </header>
 
         <div className="Main__content">
           <section className="Characters">

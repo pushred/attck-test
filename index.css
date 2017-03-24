@@ -6,6 +6,8 @@ html {
   line-height:                  var(--line-height);
 }
 
+@custom-media --min-standard    (min-width: 590px);
+
 :root {
   /* animation */
 
@@ -20,10 +22,14 @@ html {
   --line-height:                1.5;
   --box-padding:                0.4em;
 
+  --margin-spacing:             5rem;
+  --gutter-spacing:             5rem;
+
   /* elevation */
 
   --content-zindex:             50;
   --nav-zindex:                 100;
+  --header-zindex:              200;
 
   /* type */
 
@@ -130,11 +136,11 @@ html {
 }
 
 body {
-  @apply --centered;
   width: 100%;
   min-height: 100vh;
+  box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: var(--margin-spacing);
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: var(--ui-font-family);
@@ -160,41 +166,74 @@ a {
 
 .Main {
   @apply --clearfix;
-  min-width: 50em;
 }
 
 .Main__content {
   @apply --clearfix;
   width: 100%;
-  float: left;
-
-  display: flex;
-  align-items: center;
 }
 
 .Characters {
-  width: 40%;
-  padding-right: 10%;
-  float: left;
   position: relative;
+  margin-top: var(--gutter-spacing);
+  margin-bottom: var(--gutter-spacing);
   z-index: var(--nav-zindex);
 }
 
 .Movies {
-  width: 50%;
   position: relative;
-  float: left;
+}
+
+@media (--min-standard) {
+  body {
+    @apply --centered;
+  }
+
+  .Main {
+    min-width: 50em;
+  }
+
+  .Main__content {
+    float: left;
+    display: flex;
+    align-items: center;
+  }
+
+  .Characters,
+  .Movies {
+    float: left;
+  }
+
+  .Characters {
+    width: 40%;
+    padding-right: 10%;
+  }
+
+  .Movies {
+    width: 50%;
+  }
 }
 
 /* Content */
+
+.Header {
+  height: 3em;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: var(--header-zindex);
+  background: color(var(--background-color) a(0.6));
+}
 
 .Brand {
   cursor: default;
   user-select: none;
   display: inline-block;
-  position: fixed;
+  position: absolute;
   top: 0.5em;
   left: 0.5em;
+  z-index: var(--brand-zindex);
   margin: 0;
   border-right: 1px solid var(--yellow-color);
   border-bottom: 1px solid var(--yellow-color);
