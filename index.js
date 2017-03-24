@@ -1,6 +1,7 @@
 const UID = window.shortid.generate;
 const {BrowserRouter, Route, NavLink} = window.ReactRouterDOM;
 const {kebabcase, sortby} = window.lodash;
+const TransitionGroup = window.React.addons.CSSTransitionGroup;
 
 let sortBy = sortby;
 
@@ -41,6 +42,16 @@ function App () {
     });
   }, []);
 
+  let props = {
+    transition: {
+      transitionName: 'wipe',
+      transitionEnterTimeout: 1000,
+      transitionLeaveTimeout: 1000,
+      component: 'div',
+      className: 'Movies'
+    }
+  };
+
   return (
     <BrowserRouter>
       <main className="Main">
@@ -55,8 +66,13 @@ function App () {
               {characterLinks.map(props => <Character key={UID()} {...props} />)}
             </ul>
           </section>
-
-          <Route path="/:id/:slug" component={MovieList} location={location} key={location.key} />
+          <Route render={({location}) => (
+            <MovieProvider id={location}>
+              <TransitionGroup {...props.transition} >
+                <Route path="/:id/:slug" render={props => <MovieProvider {...props} />} location={location} key={location.key} />
+              </TransitionGroup>
+            </MovieProvider>
+          )}/>
         </div>
       </main>
     </BrowserRouter>
@@ -76,7 +92,7 @@ function Character ({name, path}) {
   );
 }
 
-class MovieList extends React.Component {
+class MovieProvider extends React.Component {
   constructor () {
     super();
     this.state = {
@@ -129,14 +145,14 @@ class MovieList extends React.Component {
 
         // data is fetched once, then cached in component state
         this.setState({
-          characters: Object.assign(this.state.characters, {
+          characters: Object.assign({}, this.state.characters, {
             [characterId]: {
               name: DATA.characters.find(c => parseId(c.url) === characterId).name,
               movies: movieIdsByEpisode
             }
           }),
           movies
-        });
+        })
       })
       .catch(alert);
   }
@@ -145,20 +161,27 @@ class MovieList extends React.Component {
     let {id} = this.props.match.params;
     if (!id || !parseInt(id, 10)) return null; // CodePen's own router supplying a 'boomerang' value sometimes?
 
-    if (!this.state.characters[id]) {
+    let characterData = this.state.characters[id];
+
+    if (!characterData) {
       this.getMovies(id);
       return null; // intentionally optimistic loader
     }
 
-    let {name, movies} = this.state.characters[id];
-    let movieData = movies.map(id => this.state.movies[id]);
+    let movieData = characterData.movies.map(id => this.state.movies[id]);
 
-    return (
-      <section className="MovieList">
-        {movieData.map(props => <Movie key={UID()} {...props} />)}
-      </section>
-    );
+    return <MovieList movies={movieData} />;
   }
+}
+
+function MovieList ({movies}) {
+  if (!movies) return null;
+
+  return (
+    <section className="MovieList">
+      {movies.map(props => <Movie key={UID()} {...props} />)}
+    </section>
+  );
 }
 
 function Movie ({title, releaseDate, episodeId}) {
