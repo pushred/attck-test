@@ -143,6 +143,7 @@ class MovieList extends React.Component {
 
   render () {
     let {id} = this.props.match.params;
+    if (!id || !parseInt(id, 10)) return null; // CodePen's own router supplying a 'boomerang' value sometimes?
 
     if (!this.state.characters[id]) {
       this.getMovies(id);
